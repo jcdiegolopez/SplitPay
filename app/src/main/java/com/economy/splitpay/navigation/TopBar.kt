@@ -35,10 +35,8 @@ fun TopBar(
                 text = title,
                 modifier = Modifier.fillMaxWidth().padding(end = 22.dp),
                 textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                style = MaterialTheme.typography.headlineSmall
+                    .copy(fontSize = 22.sp)
             )
         },
         navigationIcon = {
