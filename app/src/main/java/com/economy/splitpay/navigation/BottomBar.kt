@@ -11,20 +11,22 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
-
+import com.economy.splitpay.ui.theme.primaryLight
+import com.economy.splitpay.ui.theme.secondaryLight
 
 
 @Composable
-fun BottomBar(navController: NavController) {
+fun BottomBar(navController: NavController, currentRoute: String?) {
     val items = listOf(
-        BottomNavItem("Inicio", Icons.Filled.Home, "home_screen"),
-        BottomNavItem("Amigos", Icons.Filled.Add, "amigos_screen"),
-        BottomNavItem("Historial", Icons.Filled.List, "historial_screen"),
-        BottomNavItem("Perfil", Icons.Filled.Person, "perfil_screen")
+        BottomNavItem("Inicio", Icons.Filled.Home, Routes.HomeScreen.route),
+        BottomNavItem("Amigos", Icons.Filled.Add, Routes.FriendsScreen.route),
+        BottomNavItem("Historial", Icons.Filled.List, Routes.HistorialScreen.route),
+        BottomNavItem("Perfil", Icons.Filled.Person, Routes.ProfileScreen.route)
     )
 
     BottomAppBar(
@@ -44,7 +46,10 @@ fun BottomBar(navController: NavController) {
                         restoreState = true
                     }
                 }) {
-                    Icon(imageVector = item.icon, contentDescription = item.label)
+                    Icon(imageVector = item.icon,
+                        contentDescription = item.label,
+                        tint = if (currentRoute == item.route) secondaryLight else primaryLight
+                    )
                 }
             }
         }
