@@ -41,11 +41,20 @@ class MainActivity : ComponentActivity() {
 fun MainApp(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    val title = when (currentRoute) {
+        Routes.HomeScreen.route -> "Inicio"
+        Routes.ProfileScreen.route -> "Perfil"
+        Routes.FriendsScreen.route -> "Amigos"
+        Routes.HistorialScreen.route -> "Historial"
+        else -> "SplitPay"
+    }
+
     Scaffold(
         topBar = {
             val showBackButton = currentRoute != Routes.HomeScreen.route && currentRoute != Routes.ProfileScreen.route
                     && currentRoute != Routes.FriendsScreen.route && currentRoute != Routes.HistorialScreen.route
-            TopBar(navController = navController, title = "SplitPay", showBackButton = showBackButton)
+            TopBar(navController = navController, title = title, showBackButton = showBackButton)
         },
         bottomBar = {
             BottomBar(navController = navController, currentRoute = currentRoute)
