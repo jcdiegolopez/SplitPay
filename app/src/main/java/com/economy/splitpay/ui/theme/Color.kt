@@ -2,6 +2,7 @@ package com.economy.splitpay.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val navBarColor = Color(0xFF1C2936)
 val primaryLight = Color(0xFF30628C)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFCEE5FF)

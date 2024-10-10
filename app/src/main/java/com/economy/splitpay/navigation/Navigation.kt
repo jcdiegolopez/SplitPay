@@ -7,10 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.economy.splitpay.ui.screens.FriendsScreen
-import com.economy.splitpay.ui.screens.HistorialScreen
-import com.economy.splitpay.ui.screens.HomeScreen
-import com.economy.splitpay.ui.screens.ProfileScreen
+import com.economy.splitpay.ui.screens.friends.FriendsScreen
+import com.economy.splitpay.ui.screens.history.HistorialScreen
+import com.economy.splitpay.ui.screens.home.HomeScreen
+import com.economy.splitpay.ui.screens.profile.ProfileScreen
 
 
 @Composable

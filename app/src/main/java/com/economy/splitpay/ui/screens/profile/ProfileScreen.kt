@@ -1,4 +1,4 @@
-package com.economy.splitpay.ui.screens
+package com.economy.splitpay.ui.screens.profile
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
