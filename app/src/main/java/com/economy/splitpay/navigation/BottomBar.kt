@@ -44,13 +44,7 @@ fun BottomBar(navController: NavController, currentRoute: String?) {
             items.forEach { item ->
                 IconButton(
                     onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    navController.navigate(item.route)
                 }) {
                     Icon(imageVector = item.icon,
                         modifier = Modifier.size(32.dp),

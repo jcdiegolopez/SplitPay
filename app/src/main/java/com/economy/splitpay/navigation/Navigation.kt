@@ -9,7 +9,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.economy.splitpay.ui.screens.friends.FriendsScreen
 import com.economy.splitpay.ui.screens.history.HistorialScreen
+import com.economy.splitpay.ui.screens.home.AddMemberScreen
+import com.economy.splitpay.ui.screens.home.CreateGroupScreen
 import com.economy.splitpay.ui.screens.home.HomeScreen
+import com.economy.splitpay.ui.screens.home.PaymentMethodScreen
+import com.economy.splitpay.ui.screens.home.PendingGroupScreen
 import com.economy.splitpay.ui.screens.profile.ProfileScreen
 
 
@@ -33,6 +37,19 @@ fun AppNavigation(navController: NavHostController, innerPadding : PaddingValues
             ProfileScreen(navController)
         }
 
+        //HomeScreen
+        composable(Routes.CreateGroupScreen.route) {
+            CreateGroupScreen(navController)
+        }
+        composable(Routes.AddMemberScreen.route){
+            AddMemberScreen(navController)
+        }
+        composable(Routes.PendingGroupsScreen.route){
+            PendingGroupScreen(navController)
+        }
+        composable(Routes.PaymentMethodScreen.route){
+            PaymentMethodScreen(navController)
+        }
 
 
 //        composable("recipe_screen/{categoryName}") { backStackEntry ->
