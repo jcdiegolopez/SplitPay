@@ -33,10 +33,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.economy.splitpay.R
+import com.economy.splitpay.navigation.Routes
+import com.economy.splitpay.ui.theme.secondaryContainerLight
+import com.economy.splitpay.ui.theme.secondaryLight
 
 @Composable
 fun HomeScreen(navController: NavController) {
     var showJoinGroupDialog by remember { mutableStateOf(false) } // Estado para mostrar el diálogo
+    val textColor = MaterialTheme.colorScheme.onSurface
 
     Column(
         modifier = Modifier
@@ -49,11 +53,11 @@ fun HomeScreen(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
-                onClick = { navController.navigate("create_group_screen") },
+                onClick = { navController.navigate(Routes.CreateGroupScreen.route) },
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF5C045)),
+                colors = ButtonDefaults.buttonColors(containerColor = secondaryLight),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(text = "Crear un grupo", color = Color.Black, style = MaterialTheme.typography.bodyLarge)
@@ -83,7 +87,7 @@ fun HomeScreen(navController: NavController) {
         Text(
             text = "Tus Grupos",
             style = MaterialTheme.typography.headlineMedium.copy(
-                color = Color(0xFF333333) // Gris oscuro
+                color = textColor
             )
         )
 
@@ -105,7 +109,7 @@ fun HomeScreen(navController: NavController) {
         Text(
             text = "Notificaciones",
             style = MaterialTheme.typography.headlineMedium.copy(
-                color = Color.Black
+                color = textColor
             ),
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -149,7 +153,8 @@ fun JoinGroupDialog(onDismiss: () -> Unit, onJoinGroup: (String) -> Unit) {
                 ) {
                     Text(
                         text = "Unirse a un grupo",
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.Black
                     )
                     IconButton(onClick = onDismiss) {
                         Icon(
@@ -180,7 +185,7 @@ fun JoinGroupDialog(onDismiss: () -> Unit, onJoinGroup: (String) -> Unit) {
                         onDismiss() // Cerrar el diálogo
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF5C045)),
+                    colors = ButtonDefaults.buttonColors(containerColor = secondaryLight),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(text = "Unirse", color = Color.Black, style = MaterialTheme.typography.bodyLarge)
@@ -225,7 +230,7 @@ fun GroupCard(title: String, backgroundColor: Color) {
                 text = initial,
                 style = MaterialTheme.typography.headlineMedium.copy( // Cambié a un estilo de título
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             )
         }

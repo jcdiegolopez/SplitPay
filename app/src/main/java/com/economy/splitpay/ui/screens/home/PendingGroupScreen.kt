@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.economy.splitpay.navigation.Routes
 
 @Composable
 fun PendingGroupScreen(navController: NavController) {
@@ -84,7 +85,7 @@ fun PendingGroupScreen(navController: NavController) {
                 )
             }
             Button(
-                onClick = { navController.navigate("payment_method_screen") },
+                onClick = { navController.navigate(Routes.PaymentMethodScreen.route) },
                 colors = ButtonDefaults.buttonColors(Color(0xFFF0F2F5)),
                 modifier = Modifier
                     .weight(1f) // Ancho dinámico

@@ -66,9 +66,9 @@ fun MainApp(navController: NavHostController) {
     }
 }
 
-//@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-//@Composable
-//fun GreetingPreview() {
-//    SplitpayTheme {
-//        MainApp(navController = rememberNavController())
-//    }}
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun GreetingPreview() {
+    SplitpayTheme {
+        MainApp(navController = rememberNavController())
+    }}

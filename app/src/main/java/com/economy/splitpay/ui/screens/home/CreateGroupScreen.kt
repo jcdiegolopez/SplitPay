@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.economy.splitpay.R
+import com.economy.splitpay.navigation.Routes
 
 @Composable
 fun CreateGroupScreen(navController: NavController) {
@@ -82,7 +83,7 @@ fun CreateGroupScreen(navController: NavController) {
 
         // Botón de realizar
         Button(
-            onClick = { navController.navigate("pending_group_screen") },
+            onClick = { navController.navigate(Routes.PendingGroupsScreen.route) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp),
