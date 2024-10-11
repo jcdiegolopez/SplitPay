@@ -47,6 +47,8 @@ fun MainApp(navController: NavHostController) {
         Routes.ProfileScreen.route -> "Perfil"
         Routes.FriendsScreen.route -> "Amigos"
         Routes.HistorialScreen.route -> "Historial"
+        Routes.CreateGroupScreen.route -> "Crear Grupo"
+
         else -> "SplitPay"
     }
 
