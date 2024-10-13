@@ -33,7 +33,7 @@ fun HistorialScreen(navController: NavController) {
         // Search bar
         SearchBar(searchText, onSearchChange = { searchText = it })
 
-        Spacer(modifier = Modifier.height(16.dp))
+//        Spacer(modifier = Modifier.height(16.dp))
 
         // Tabs
         TabRow(selectedTabIndex = selectedTabIndex) {
@@ -60,21 +60,22 @@ fun HistorialScreen(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(searchText: TextFieldValue, onSearchChange: (TextFieldValue) -> Unit) {
-    TextField(
+    OutlinedTextField(
         value = searchText,
         onValueChange = { onSearchChange(it) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
+        shape = RoundedCornerShape(8.dp),
         placeholder = { Text("Buscar") },
         leadingIcon = {
             Icon(imageVector = Icons.Default.Search, contentDescription = "Buscar")
         },
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color(0xFFF6F6F6),
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        )
+//        colors = TextFieldDefaults.textFieldColors(
+//            containerColor = Color(0xFFF6F6F6),
+//            focusedIndicatorColor = Color.Transparent,
+//            unfocusedIndicatorColor = Color.Transparent
+//        )
     )
 }
 

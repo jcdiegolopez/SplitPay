@@ -13,6 +13,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -64,70 +65,96 @@ fun ProfileScreen(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(
-                onClick = { navController.navigate(Routes.FriendsScreen.route) },
-                modifier = Modifier.weight(1f),
+                onClick = {  },
+//                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = secondaryLight)
             ) {
-                Text("Añadir amigos", color = Color.Black)
+                Text("Editar Perfil", color = Color.Black)
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(
                 onClick = { /* Acción de invitar amigos */ },
-                modifier = Modifier.weight(1f)
+//                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF333947))
             ) {
-                Text("Invitar amigos")
+                Text("Invitar amigos", color = Color.White)
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = { navController.navigate(Routes.FriendsScreen.route) },
+//                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF333947))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PersonAddAlt,
+                    contentDescription = "Icono de añadir",
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.White
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-
-        // Configurations Title
-        Text(
-            text = "Configuraciones",
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-        )
 
         // Configurations List
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            ConfigOption("Cuenta", Icons.Default.AccountCircle, Icons.Default.KeyboardArrowRight)
             ConfigOption("Métodos de pago", Icons.Default.CreditCard, Icons.Default.KeyboardArrowRight)
             ConfigOption("Notificaciones", Icons.Default.Notifications, Icons.Default.KeyboardArrowRight)
-            ConfigOption("Help", Icons.Default.Info, Icons.Default.KeyboardArrowRight)
-            ConfigOption("Salir", Icons.Default.ExitToApp, Icons.Default.ArrowForward)
+            ConfigOption("Términos y condiciones", Icons.Default.Info, Icons.Default.KeyboardArrowRight)
+            ConfigOption("Cerrar Sesión", Icons.Default.ExitToApp, Icons.Default.KeyboardArrowRight)
         }
     }
 }
 
 @Composable
 fun ConfigOption(title: String, leftIcon: ImageVector, rightIcon: ImageVector) {
-    Row(
+    Button(
+        onClick = { /* Acción al hacer clic en la opción */ },
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), // Botón sin color de fondo
+        contentPadding = PaddingValues(0.dp) // Sin padding para que se vea como una fila normal
     ) {
-        // Left icon
-        Icon(
-            imageVector = leftIcon,
-            contentDescription = "Icono de configuración",
-            modifier = Modifier.size(24.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Left icon
+            Icon(
+                imageVector = leftIcon,
+                contentDescription = "Icono de configuración",
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onSurface
+            )
 
-        // Title
-        Text(
-            text = title,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium
-        )
+            Spacer(modifier = Modifier.width(8.dp))
 
-        // Right icon
-        Icon(
-            imageVector = rightIcon,
-            contentDescription = "Ir a configuración",
-            modifier = Modifier.size(24.dp)
-        )
+            // Title
+            Text(
+                text = title,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            // Right icon
+            Icon(
+                imageVector = rightIcon,
+                contentDescription = "Ir a configuración",
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }

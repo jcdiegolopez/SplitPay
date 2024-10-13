@@ -5,10 +5,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.GroupAdd
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.ManageHistory
+import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,9 +34,9 @@ import com.economy.splitpay.ui.theme.secondaryLight
 fun BottomBar(navController: NavController, currentRoute: String?) {
     val items = listOf(
         BottomNavItem("Inicio", Icons.Filled.Home, Routes.HomeScreen.route),
-        BottomNavItem("Amigos", Icons.Filled.Add, Routes.FriendsScreen.route),
-        BottomNavItem("Historial", Icons.Filled.List, Routes.HistorialScreen.route),
-        BottomNavItem("Perfil", Icons.Filled.Person, Routes.ProfileScreen.route)
+        BottomNavItem("Amigos", Icons.Default.PersonAdd, Routes.FriendsScreen.route),
+        BottomNavItem("Historial", Icons.Default.ManageSearch, Routes.HistorialScreen.route),
+        BottomNavItem("Perfil", Icons.Filled.AccountCircle, Routes.ProfileScreen.route)
     )
 
     BottomAppBar(
