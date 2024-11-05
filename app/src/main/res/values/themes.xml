@@ -6,7 +6,7 @@
 
     <style name="Theme.Splitpay.SplashScreen" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/black</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/dog</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo1</item>
         <item name="postSplashScreenTheme">@style/Theme.Splitpay</item>
     </style>
 
