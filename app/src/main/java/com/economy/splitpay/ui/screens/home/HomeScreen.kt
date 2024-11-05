@@ -72,7 +72,7 @@ fun HomeScreen(navController: NavController) {
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
-                    text = "Unirse a un grupo",
+                    text = "Unirse",
                     color = Color.White,
                     style = MaterialTheme.typography.bodyLarge,
                     overflow = TextOverflow.Ellipsis,

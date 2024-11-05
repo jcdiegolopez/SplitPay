@@ -2,12 +2,14 @@
 <resources>
 
     <style name="Theme.Splitpay" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Configuración general de la aplicación -->
     </style>
 
     <style name="Theme.Splitpay.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/black</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logo1</item>
+        <item name="windowSplashScreenBackground">#1C2936</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo2</item>
         <item name="postSplashScreenTheme">@style/Theme.Splitpay</item>
+        <item name="android:windowFullscreen">true</item> <!-- Asegura pantalla completa -->
     </style>
 
 </resources>
