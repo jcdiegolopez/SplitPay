@@ -54,14 +54,22 @@ fun MainApp(navController: NavHostController) {
         else -> "SplitPay"
     }
 
+    val showBottomBar = currentRoute != Routes.LoginScreen.route && currentRoute != Routes.RegisterScreen.route
+    val showTopBar = currentRoute != Routes.LoginScreen.route && currentRoute != Routes.RegisterScreen.route
+
     Scaffold(
         topBar = {
-            val showBackButton = currentRoute != Routes.HomeScreen.route && currentRoute != Routes.ProfileScreen.route
-                    && currentRoute != Routes.FriendsScreen.route && currentRoute != Routes.HistorialScreen.route
-            TopBar(navController = navController, title = title, showBackButton = showBackButton)
+            if (showTopBar) {
+                val showBackButton = currentRoute != Routes.HomeScreen.route && currentRoute != Routes.ProfileScreen.route
+                        && currentRoute != Routes.FriendsScreen.route && currentRoute != Routes.HistorialScreen.route
+                TopBar(navController = navController, title = title, showBackButton = showBackButton)
+            }
+
         },
         bottomBar = {
-            BottomBar(navController = navController, currentRoute = currentRoute)
+            if (showBottomBar){
+                BottomBar(navController = navController, currentRoute = currentRoute)
+            }
         }
     ) { innerPadding ->
         AppNavigation(navController = navController, innerPadding = innerPadding )

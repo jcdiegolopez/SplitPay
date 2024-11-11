@@ -12,4 +12,8 @@ sealed class Routes(val route: String) {
     data object AddMemberScreen : Routes("add_member_screen")
     data object PendingGroupsScreen : Routes("pending_group_screen")
     data object PaymentMethodScreen : Routes("payment_method_screen")
+
+    //login routes
+    data object LoginScreen : Routes("login")
+    data object RegisterScreen : Routes("register")
 }
