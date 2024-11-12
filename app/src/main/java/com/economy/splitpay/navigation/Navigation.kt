@@ -15,8 +15,12 @@ import com.economy.splitpay.ui.screens.home.HomeScreen
 import com.economy.splitpay.ui.screens.home.PaymentMethodScreen
 import com.economy.splitpay.ui.screens.home.PendingGroupScreen
 import com.economy.splitpay.ui.screens.login.LoginScreen
+import com.economy.splitpay.ui.screens.profile.EditProfileScreen
 import com.economy.splitpay.ui.screens.profile.ProfileScreen
+import com.economy.splitpay.ui.screens.profile.AccountScreen
+import com.economy.splitpay.ui.screens.profile.TermsScreen
 import com.economy.splitpay.ui.screens.register.RegisterScreen
+
 
 
 @Composable
@@ -52,6 +56,21 @@ fun AppNavigation(navController: NavHostController, innerPadding : PaddingValues
         composable(Routes.PaymentMethodScreen.route){
             PaymentMethodScreen(navController)
         }
+
+        //PerfilScreen
+        composable(Routes.EditProfileScreen.route) {
+            EditProfileScreen(navController)
+        }
+        composable(Routes.AccountScreen.route) {
+            AccountScreen(navController)
+        }
+        composable(Routes.TermsScreen.route) {
+            TermsScreen(navController)
+        }
+//        composable(Routes.SettingsScreen.route) {
+//            SettingsScreen(navController)
+//        }
+
 
         //LoginScreen
         composable(Routes.LoginScreen.route) {
