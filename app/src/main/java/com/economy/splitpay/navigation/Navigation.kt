@@ -17,6 +17,8 @@ import com.economy.splitpay.ui.screens.home.PendingGroupScreen
 import com.economy.splitpay.ui.screens.login.LoginScreen
 import com.economy.splitpay.ui.screens.profile.ProfileScreen
 import com.economy.splitpay.ui.screens.register.RegisterScreen
+import com.economy.splitpay.viewmodel.login.LoginViewModel
+import com.economy.splitpay.viewmodel.login.RegisterViewModel
 
 
 @Composable
@@ -55,10 +57,10 @@ fun AppNavigation(navController: NavHostController, innerPadding : PaddingValues
 
         //LoginScreen
         composable(Routes.LoginScreen.route) {
-            LoginScreen(navController)
+            LoginScreen(navController, viewModel = LoginViewModel())
         }
         composable(Routes.RegisterScreen.route) {
-            RegisterScreen(navController)
+            RegisterScreen(navController, viewModel = RegisterViewModel())
         }
 
 

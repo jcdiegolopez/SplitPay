@@ -21,15 +21,33 @@ import com.economy.splitpay.R
 import com.economy.splitpay.navigation.Routes
 import com.economy.splitpay.ui.theme.primary
 import com.economy.splitpay.ui.theme.secondaryLight
+import com.economy.splitpay.viewmodel.login.LoginState
+import com.economy.splitpay.viewmodel.login.LoginViewModel
+import com.economy.splitpay.viewmodel.login.RegisterState
+import com.economy.splitpay.viewmodel.login.RegisterViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController) {
-    var username by remember { mutableStateOf(TextFieldValue("")) }
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
+    var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
 
-    // Definición de colores
+    val loginState by viewModel.loginState.collectAsState()
+
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is LoginState.Success -> {
+                navController.navigate(Routes.HomeScreen.route)
+            }
+            is LoginState.Error -> {
+                val errorMessage = (loginState as LoginState.Error).error
+                // Implementar un sistema para mostrar mensajes de error (snackbar, diálogo, etc.)
+            }
+            else -> {}
+
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -58,11 +76,11 @@ fun LoginScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Campo de usuario
+        // Campo de Correo
         TextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Usuario", color = Color.Gray) },
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Correo", color = Color.Gray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
@@ -97,7 +115,9 @@ fun LoginScreen(navController: NavController) {
 
         // Botón de Ingresar
         Button(
-            onClick = { navController.navigate(Routes.HomeScreen.route) },
+            onClick = {
+                viewModel.loginUser(email.text, password.text)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
@@ -114,6 +134,17 @@ fun LoginScreen(navController: NavController) {
             onClick = { navController.navigate(Routes.RegisterScreen.route) }
         ) {
             Text("¿No tienes cuenta? Regístrate", color = Color.White)
+        }
+    }
+
+    if (loginState is LoginState.Loading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = secondaryLight)
         }
     }
 }

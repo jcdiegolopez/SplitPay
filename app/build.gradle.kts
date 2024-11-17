@@ -74,14 +74,18 @@ dependencies {
 
     implementation("com.google.firebase:firebase-firestore")
 
+    implementation("com.google.firebase:firebase-auth")
 
     // TODO: Add the dependencies for Firebase products you want to use
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
 
+    // Core library for coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3") // Usa la última versión
 
-    // Add the dependencies for any other desired Firebase products
-    // https://firebase.google.com/docs/android/setup#available-libraries
+    // Android-specific library for coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
