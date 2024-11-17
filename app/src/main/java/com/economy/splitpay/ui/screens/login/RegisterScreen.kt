@@ -21,16 +21,37 @@ import com.economy.splitpay.R
 import com.economy.splitpay.navigation.Routes
 import com.economy.splitpay.ui.theme.primary
 import com.economy.splitpay.ui.theme.secondaryLight
+import com.economy.splitpay.viewmodel.login.RegisterState
+import com.economy.splitpay.viewmodel.login.RegisterViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(navController: NavController) {
+fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel) {
     var firstName by remember { mutableStateOf(TextFieldValue("")) }
     var lastName by remember { mutableStateOf(TextFieldValue("")) }
     var phoneNumber by remember { mutableStateOf(TextFieldValue("")) }
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var username by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
+
+    val registerState by viewModel.registerState.collectAsState()
+
+    // Mostrar feedback basado en el estado
+    LaunchedEffect(registerState) {
+        when (registerState) {
+            is RegisterState.Success -> {
+                // Mostrar un mensaje de éxito y navegar
+                navController.navigate(Routes.LoginScreen.route)
+            }
+            is RegisterState.Error -> {
+                // Mostrar un error con un mensaje de error
+                val errorMessage = (registerState as RegisterState.Error).error
+                // Implementar un sistema para mostrar mensajes de error (snackbar, diálogo, etc.)
+            }
+            else -> {}
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -170,7 +191,16 @@ fun RegisterScreen(navController: NavController) {
 
         // Botón de Registro
         Button(
-            onClick = { navController.navigate(Routes.LoginScreen.route) },
+            onClick = {
+                viewModel.registerUser(
+                    email = email.text,
+                    password = password.text,
+                    firstname = firstName.text,
+                    lastname = lastName.text,
+                    tel = phoneNumber.text,
+                    username = username.text
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
@@ -182,11 +212,22 @@ fun RegisterScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Texto para volver al login
         TextButton(
             onClick = { navController.navigate(Routes.LoginScreen.route) }
         ) {
             Text("¿Ya tienes cuenta? Inicia Sesión", color = Color.White)
+        }
+    }
+
+    // Mostrar indicador de carga si el estado es Loading
+    if (registerState is RegisterState.Loading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = secondaryLight)
         }
     }
 }

@@ -3,7 +3,7 @@
     "project_number": "54966365977",
     "firebase_url": "https://splitpay-39f05-default-rtdb.firebaseio.com",
     "project_id": "splitpay-39f05",
-    "storage_bucket": "splitpay-39f05.appspot.com"
+    "storage_bucket": "splitpay-39f05.firebasestorage.app"
   },
   "client": [
     {
@@ -13,7 +13,12 @@
           "package_name": "com.economy.splitpay"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "54966365977-1h3cl5thnaq53inndcf8isjne0fob6ml.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD1FqezWC85j7vNPiDqADZJTYWdICVJ_44"
@@ -21,7 +26,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "54966365977-1h3cl5thnaq53inndcf8isjne0fob6ml.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

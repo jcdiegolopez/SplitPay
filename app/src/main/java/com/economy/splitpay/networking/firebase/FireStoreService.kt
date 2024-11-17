@@ -1,44 +1,28 @@
 package com.economy.splitpay.networking.firebase
 
 import com.economy.splitpay.model.User
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.tasks.await
 
 class FirestoreService {
-    private val db = FirebaseFirestore.getInstance()
+    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    // Método para obtener un usuario por ID
+    // Guardar usuario en Firestore
+    suspend fun saveUser(user: User) {
+        try {
+            db.collection("users").document(user.userId).set(user).await()
+        } catch (e: Exception) {
+            throw Exception("Error al guardar el usuario en Firestore: ${e.message}")
+        }
+    }
+
+    // Obtener usuario por ID
     suspend fun getUserById(userId: String): User? {
         return try {
-            val documentSnapshot: DocumentSnapshot = db.collection("users").document(userId).get().await()
-            documentSnapshot.toObject(User::class.java)
+            val document = db.collection("users").document(userId).get().await()
+            document.toObject(User::class.java) ?: throw Exception("Usuario no encontrado en Firestore.")
         } catch (e: Exception) {
-            // Manejar error
-            null
-        }
-    }
-
-    // Método para crear o actualizar un usuario
-    suspend fun saveUser(user: User): Boolean {
-        return try {
-            db.collection("users").document(user.userId).set(user).await()
-            true
-        } catch (e: Exception) {
-            // Manejar error
-            false
-        }
-    }
-
-    // Método para obtener todos los usuarios (opcional)
-    suspend fun getAllUsers(): List<User> {
-        return try {
-            val querySnapshot: QuerySnapshot = db.collection("users").get().await()
-            querySnapshot.toObjects(User::class.java)
-        } catch (e: Exception) {
-            // Manejar error
-            emptyList()
+            throw Exception("Error al obtener el usuario de Firestore: ${e.message}")
         }
     }
 }
