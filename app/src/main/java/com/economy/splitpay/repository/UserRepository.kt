@@ -1,6 +1,7 @@
 package com.economy.splitpay.repository
 
 import com.economy.splitpay.model.User
+import com.economy.splitpay.model.FriendRequest
 import com.economy.splitpay.networking.firebase.AuthService
 import com.economy.splitpay.networking.firebase.FirestoreService
 
@@ -55,4 +56,22 @@ class UserRepository(
     fun logout() {
         authService.logout()
     }
+
+
+    // Enviar una solicitud de amistad
+    suspend fun sendFriendRequest(friendRequest: FriendRequest) {
+        firestoreService.sendFriendRequest(friendRequest)
+    }
+
+    // Obtener solicitudes de amistad recibidas
+    suspend fun getReceivedFriendRequests(userId: String): List<FriendRequest> {
+        return firestoreService.getReceivedFriendRequests(userId)
+    }
+
+    // Actualizar estado de una solicitud de amistad
+    suspend fun updateFriendRequestStatus(requestId: String, status: String) {
+        firestoreService.updateFriendRequestStatus(requestId, status)
+    }
+
+
 }
