@@ -2,12 +2,16 @@ package com.economy.splitpay.networking.firebase
 
 import com.economy.splitpay.model.User
 import com.economy.splitpay.model.FriendRequest
+import com.economy.splitpay.model.Group
+import com.economy.splitpay.model.Member
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 class FirestoreService {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
+    // ---------------------  USUARIOS -----------------------//
     // Guardar usuario en Firestore
     suspend fun saveUser(user: User) {
         try {
@@ -27,6 +31,96 @@ class FirestoreService {
         }
     }
 
+    suspend fun updateUser(userId: String, updates: Map<String, Any>) {
+        try {
+            db.collection("users").document(userId).update(updates).await()
+        } catch (e: Exception) {
+            throw Exception("Error al actualizar el usuario: ${e.message}")
+        }
+    }
+
+
+
+    // -------------------------------  GRUPOS  ----------------------------------//
+    // Obtener un grupo por ID
+    suspend fun getGroupById(groupId: String): Group? {
+        return try {
+            val document = db.collection("groups")
+                .document(groupId)
+                .get()
+                .await()
+            document.toObject(Group::class.java)?.apply {
+                this.groupId = groupId
+            }
+        } catch (e: Exception) {
+            throw Exception("Error al obtener el grupo: ${e.message}")
+        }
+    }
+
+    // Obtener un grupo por token
+    suspend fun getGroupByToken(token: String): Group? {
+        return try {
+            val querySnapshot = db.collection("groups")
+                .whereEqualTo("token", token)
+                .get()
+                .await()
+            if (querySnapshot.isEmpty) null else querySnapshot.documents[0].toObject(Group::class.java)
+        } catch (e: Exception) {
+            throw Exception("Error al obtener el grupo por token: ${e.message}")
+        }
+    }
+
+    // Guardar un nuevo grupo
+    suspend fun saveGroup(group: Group): String {
+        return try {
+            val documentRef = db.collection("groups")
+                .add(group)
+                .await()
+            documentRef.id
+        } catch (e: Exception) {
+            throw Exception("Error al guardar el grupo: ${e.message}")
+        }
+    }
+
+    // Actualizar un grupo genérico
+    suspend fun updateGroup(groupId: String, updates: Map<String, Any>) {
+        try {
+            db.collection("groups")
+                .document(groupId)
+                .update(updates)
+                .await()
+        } catch (e: Exception) {
+            throw Exception("Error al actualizar el grupo: ${e.message}")
+        }
+    }
+
+    // Actualizar lista de miembros del grupo
+    suspend fun updateGroupMembers(groupId: String, members: List<Member>) {
+        updateGroup(groupId, mapOf("members" to members))
+    }
+
+    // Verificar si un token ya existe
+    suspend fun isTokenAlreadyInUse(token: String): Boolean {
+        return try {
+            val querySnapshot = db.collection("groups")
+                .whereEqualTo("token", token)
+                .get()
+                .await()
+            !querySnapshot.isEmpty
+        } catch (e: Exception) {
+            throw Exception("Error al verificar el token: ${e.message}")
+        }
+    }
+
+    // Generar un token único para un grupo
+    suspend fun generateUniqueGroupToken(): String {
+        var token: String
+        do {
+            token = UUID.randomUUID().toString().take(6)
+        } while (isTokenAlreadyInUse(token))
+        return token
+    }
+// ----------------------------  FRIEND REQUEST ---------------------------------//
     // Enviar una solicitud de amistad
     suspend fun sendFriendRequest(friendRequest: FriendRequest) {
         try {
@@ -50,7 +144,6 @@ class FirestoreService {
             throw Exception("Error al obtener las solicitudes de amistad: ${e.message}")
         }
     }
-
     // Actualizar el estado de una solicitud de amistad
     suspend fun updateFriendRequestStatus(requestId: String, status: String) {
         try {

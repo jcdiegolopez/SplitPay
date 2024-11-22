@@ -87,7 +87,9 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
                 focusedIndicatorColor = secondaryLight,
-                unfocusedIndicatorColor = Color.Gray
+                unfocusedIndicatorColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.LightGray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
         )
@@ -105,7 +107,9 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
                 focusedIndicatorColor = secondaryLight,
-                unfocusedIndicatorColor = Color.Gray
+                unfocusedIndicatorColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.LightGray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = PasswordVisualTransformation()

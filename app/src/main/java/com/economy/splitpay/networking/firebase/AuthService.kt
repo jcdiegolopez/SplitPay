@@ -47,4 +47,8 @@ class AuthService {
     fun logout() {
         auth.signOut()
     }
+
+    fun getCurrentUserId(): String {
+        return auth.currentUser?.uid ?: ""
+    }
 }
