@@ -10,7 +10,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,7 +64,7 @@ fun ProfileScreen(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(
-                onClick = {  },
+                onClick = { navController.navigate(Routes.EditProfileScreen.route) },
 //                modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = secondaryLight)
@@ -104,19 +103,48 @@ fun ProfileScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ConfigOption("Cuenta", Icons.Default.AccountCircle, Icons.Default.KeyboardArrowRight)
-            ConfigOption("Métodos de pago", Icons.Default.CreditCard, Icons.Default.KeyboardArrowRight)
-            ConfigOption("Notificaciones", Icons.Default.Notifications, Icons.Default.KeyboardArrowRight)
-            ConfigOption("Términos y condiciones", Icons.Default.Info, Icons.Default.KeyboardArrowRight)
-            ConfigOption("Cerrar Sesión", Icons.Default.ExitToApp, Icons.Default.KeyboardArrowRight)
+            ConfigOption("Cuenta", Icons.Default.AccountCircle, Icons.Default.KeyboardArrowRight) {
+                navController.navigate(Routes.AccountScreen.route)
+            }
+            ConfigOption(
+                "Métodos de pago",
+                Icons.Default.CreditCard,
+                Icons.Default.KeyboardArrowRight
+            ) {
+                navController.navigate(Routes.AccountScreen.route)
+            }
+            ConfigOption(
+                "Notificaciones",
+                Icons.Default.Notifications,
+                Icons.Default.KeyboardArrowRight
+            ) {
+                navController.navigate(Routes.SettingsScreen.route)
+            }
+            ConfigOption(
+                "Términos y condiciones",
+                Icons.Default.Info,
+                Icons.Default.KeyboardArrowRight
+            ) {
+                navController.navigate(Routes.TermsScreen.route)
+            }
+            ConfigOption(
+                "Cerrar Sesión",
+                Icons.Default.ExitToApp,
+                Icons.Default.KeyboardArrowRight
+            ) {
+                // Acción de cerrar sesión
+                navController.navigate(Routes.LoginScreen.route) {
+                    popUpTo(Routes.HomeScreen.route) { inclusive = true }
+                }
+            }
         }
     }
 }
 
 @Composable
-fun ConfigOption(title: String, leftIcon: ImageVector, rightIcon: ImageVector) {
+fun ConfigOption(title: String, leftIcon: ImageVector, rightIcon: ImageVector, onclick: () -> Unit) {
     Button(
-        onClick = { /* Acción al hacer clic en la opción */ },
+        onClick = onclick,
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
