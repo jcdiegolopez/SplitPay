@@ -64,7 +64,14 @@ class FirestoreService {
                 .whereEqualTo("token", token)
                 .get()
                 .await()
-            if (querySnapshot.isEmpty) null else querySnapshot.documents[0].toObject(Group::class.java)
+
+            if (querySnapshot.isEmpty) {
+                null
+            } else {
+                val document = querySnapshot.documents[0]
+                val group = document.toObject(Group::class.java)
+                group?.apply { groupId = document.id } // Asignar el ID del documento al objeto Group
+            }
         } catch (e: Exception) {
             throw Exception("Error al obtener el grupo por token: ${e.message}")
         }
