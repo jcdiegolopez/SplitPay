@@ -70,7 +70,7 @@ fun PendingGroupScreen(navController: NavController, viewModel: PendingGroupView
 
     // Cargar el grupo al iniciar la pantalla
     LaunchedEffect(key1 = groupId) {
-        viewModel.getGroupById(groupId)
+        viewModel.loadGroupWithLeaderStatus(groupId)
     }
 
     var showModifyDialog by remember { mutableStateOf(false) } // Estado para mostrar el diálogo
@@ -123,37 +123,69 @@ fun PendingGroupScreen(navController: NavController, viewModel: PendingGroupView
                     ParticipantItem(
                         name = member.name,
                         amount = "Q${member.assignedAmount}",
-                        status = if (member.paymentStatus == "pending") "Pendiente" else "Pagado"
+                        status = if (member.accepted ) "Aceptado"  else "Pendiente"
                     )
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Button(
-                        onClick = { showModifyDialog = true },
-                        colors = ButtonDefaults.buttonColors(Color(0xFF127DED)),
+                if ((groupState as PendingGroupState.GroupLoaded).isLeader) {
+                    // Vista para el líder
+                    Row(
                         modifier = Modifier
-                            .weight(1f)
-                            .height(50.dp),
-                        shape = RoundedCornerShape(8.dp)
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Text(text = "Modificar", style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                        Button(
+                            onClick = { showModifyDialog = true },
+                            colors = ButtonDefaults.buttonColors(Color(0xFF127DED)),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(50.dp),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(text = "Modificar", style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                        }
+                        Button(
+                            onClick = { navController.navigate(Routes.PaymentMethodScreen.route) },
+                            colors = ButtonDefaults.buttonColors(Color(0xFFF0F2F5)),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(50.dp),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(text = "Confirmar", color = Color.Black, style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                        }
                     }
-                    Button(
-                        onClick = { navController.navigate(Routes.PaymentMethodScreen.route) },
-                        colors = ButtonDefaults.buttonColors(Color(0xFFF0F2F5)),
+                } else {
+                    // Vista para miembros
+                    Row(
                         modifier = Modifier
-                            .weight(1f)
-                            .height(50.dp),
-                        shape = RoundedCornerShape(8.dp)
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Text(text = "Confirmar", color = Color.Black, style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                        Button(
+                            onClick = { viewModel.updateMemberAcceptance(groupId,  true) },
+                            colors = ButtonDefaults.buttonColors(Color(0xFF127DED)),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(50.dp),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(text = "Aceptar", style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                        }
+                        Button(
+                            onClick = { viewModel.updateMemberAcceptance(groupId, false) },
+                            colors = ButtonDefaults.buttonColors(Color(0xFFFF4444)),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(50.dp),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(text = "Rechazar", color = Color.White, style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                        }
                     }
                 }
             }

@@ -152,6 +152,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
             onJoinGroup = { token ->
                 viewModel.joinGroupByToken(token)
                 showJoinGroupDialog = false
+                viewModel.loadUserGroups()
             }
         )
     }
@@ -206,6 +207,7 @@ fun JoinGroupDialog(onDismiss: () -> Unit, onJoinGroup: (String) -> Unit) {
                 Button(
                     onClick = {
                         onJoinGroup(groupCode.text)
+
                         onDismiss()
                     },
                     modifier = Modifier.fillMaxWidth(),

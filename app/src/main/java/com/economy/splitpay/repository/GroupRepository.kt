@@ -17,7 +17,10 @@ class GroupRepository(
         members: List<Member> = emptyList()
     ): String {
         try {
+            // Generar un token único para el grupo
             val token = firestoreService.generateUniqueGroupToken()
+
+            // Crear el grupo con los datos iniciales
             val group = Group(
                 groupId = null, // Firestore generará el ID automáticamente
                 leaderId = leaderId,
@@ -29,15 +32,24 @@ class GroupRepository(
                 members = members
             )
 
-            // Crear el grupo y obtener el ID generado
+            // Guardar el grupo y obtener el ID generado
             val groupId = firestoreService.saveGroup(group)
 
-            // Actualizar el usuario actual para agregar el grupo creado a groupsLed
-            val user = firestoreService.getUserById(leaderId)
-                ?: throw Exception("No se encontró al usuario con ID: $leaderId")
+            // Actualizar el usuario líder para agregar el grupo a su lista de grupos liderados
+            val leader = firestoreService.getUserById(leaderId)
+                ?: throw Exception("No se encontró al usuario líder con ID: $leaderId")
 
-            val updatedGroupsLed = user.groupsLed.toMutableList().apply { add(groupId) }
-            firestoreService.updateUser(user.userId, mapOf("groupsLed" to updatedGroupsLed))
+            val updatedGroupsLed = leader.groupsLed.toMutableList().apply { add(groupId) }
+            firestoreService.updateUser(leader.userId, mapOf("groupsLed" to updatedGroupsLed))
+
+            // Actualizar la lista de gruposJoined para cada miembro
+            members.forEach { member ->
+                val user = firestoreService.getUserById(member.userId)
+                    ?: throw Exception("No se encontró al miembro con ID: ${member.userId}")
+
+                val updatedGroupsJoined = user.groupsJoined.toMutableList().apply { add(groupId) }
+                firestoreService.updateUser(user.userId, mapOf("groupsJoined" to updatedGroupsJoined))
+            }
 
             return groupId
         } catch (e: Exception) {
@@ -45,15 +57,12 @@ class GroupRepository(
         }
     }
 
+
     // Obtener un grupo por ID
     suspend fun getGroupById(groupId: String): Group? {
         return firestoreService.getGroupById(groupId)
     }
 
-    // Obtener un grupo por token
-    suspend fun getGroupByToken(token: String): Group? {
-        return firestoreService.getGroupByToken(token)
-    }
 
     // Unirse a un grupo utilizando el token
     suspend fun joinGroupByToken(token: String, userId: String) {
@@ -89,7 +98,7 @@ class GroupRepository(
             firestoreService.updateUser(user.userId, mapOf("groupsJoined" to updatedGroupsJoined))
 
             // Agregar al usuario como miembro del grupo
-            updatedMembers.add(Member(userId = userId))
+            updatedMembers.add(Member(userId = userId, assignedAmount = 0.0, name = "${user.firstname} ${user.lastname}" ))
             firestoreService.updateGroupMembers(groupId, updatedMembers)
         } catch (e: Exception) {
             Log.e("GroupRepository", "Error al unirse al grupo:", e)
@@ -102,6 +111,30 @@ class GroupRepository(
     suspend fun updateGroupStatus(groupId: String, status: String) {
         firestoreService.updateGroup(groupId, mapOf("status" to status))
     }
+
+    suspend fun updateMemberAcceptance(groupId: String, memberId: String, accepted: Boolean) {
+        try {
+            // Obtener el grupo actual
+            val group = firestoreService.getGroupById(groupId)
+                ?: throw Exception("No se encontró el grupo con ID: $groupId")
+
+            // Actualizar el estado del miembro
+            val updatedMembers = group.members.map { member ->
+                if (member.userId == memberId) {
+                    member.copy(accepted = accepted)
+                } else {
+                    member
+                }
+            }
+
+            // Guardar los cambios en Firestore
+            firestoreService.updateGroupMembers(groupId, updatedMembers)
+        } catch (e: Exception) {
+            Log.e("GroupRepository", "Error al actualizar aceptación del miembro:", e)
+            throw Exception("Error al actualizar aceptación: ${e.message}")
+        }
+    }
+
 
     // Actualizar miembros del grupo
     suspend fun updateGroupMembers(groupId: String, members: List<Member>) {

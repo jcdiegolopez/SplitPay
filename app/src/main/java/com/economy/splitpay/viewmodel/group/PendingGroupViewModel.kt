@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.economy.splitpay.model.Group
 import com.economy.splitpay.repository.GroupRepository
+import com.economy.splitpay.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PendingGroupViewModel(
-    private val groupRepository: GroupRepository = GroupRepository()
+    private val groupRepository: GroupRepository = GroupRepository(),
+    private val userRepository: UserRepository = UserRepository()
 ) : ViewModel() {
 
     private val _groupState = MutableStateFlow<PendingGroupState>(PendingGroupState.Loading)
@@ -21,7 +23,6 @@ class PendingGroupViewModel(
     // Cargar datos de un grupo por su ID
     fun getGroupById(groupId: String) {
         viewModelScope.launch {
-
             try {
                 val group = groupRepository.getGroupById(groupId)
                 if (group != null) {
@@ -32,6 +33,40 @@ class PendingGroupViewModel(
             } catch (e: Exception) {
                 _groupState.value = PendingGroupState.Error("Error al cargar el grupo: ${e.message}")
                 Log.e("PendingGroupViewModel", "Error al cargar el grupo", e)
+            }
+        }
+    }
+
+    fun loadGroupWithLeaderStatus(groupId: String) {
+        viewModelScope.launch {
+            try {
+                // Obtener el grupo por ID
+                val group = groupRepository.getGroupById(groupId)
+                    ?: throw Exception("No se encontró el grupo.")
+
+                // Obtener el usuario actual
+                val currentUserId = userRepository.getCurrentUserId()
+                    ?: throw Exception("No se pudo obtener el ID del usuario actual.")
+
+                // Determinar si el usuario actual es líder
+                val isLeader = group.leaderId == currentUserId
+
+                // Actualizar el estado con el grupo y el estado de liderazgo
+                _groupState.value = PendingGroupState.GroupLoaded(group, isLeader)
+            } catch (e: Exception) {
+                _groupState.value = PendingGroupState.Error("Error al cargar el grupo: ${e.message}")
+                Log.e("PendingGroupViewModel", "Error al cargar el grupo", e)
+            }
+        }
+    }
+
+    fun updateMemberAcceptance(groupId: String, accepted: Boolean) {
+        viewModelScope.launch {
+            try {
+                groupRepository.updateMemberAcceptance(groupId, userRepository.getCurrentUserId() , accepted)
+                loadGroupWithLeaderStatus(groupId) // Recargar los datos del grupo
+            } catch (e: Exception) {
+                _groupState.value = PendingGroupState.Error("Error al actualizar el estado: ${e.message}")
             }
         }
     }
@@ -66,6 +101,6 @@ class PendingGroupViewModel(
 // Representa el estado de la pantalla de PendingGroup
 sealed class PendingGroupState {
     object Loading : PendingGroupState()
-    data class GroupLoaded(val group: Group) : PendingGroupState()
+    data class GroupLoaded(val group: Group, val isLeader: Boolean = false) : PendingGroupState()
     data class Error(val message: String) : PendingGroupState()
 }
