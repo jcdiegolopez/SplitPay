@@ -148,6 +148,9 @@ class UserRepository(
         return firestoreService.observeFriendRequests(userId)
     }
 
+    suspend fun addFriend(fromUserId: String, toUserId: String) {
+        firestoreService.addFriend(fromUserId, toUserId)
+    }
 
 
 }

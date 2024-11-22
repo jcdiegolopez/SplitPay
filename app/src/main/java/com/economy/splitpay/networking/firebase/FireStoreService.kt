@@ -229,6 +229,37 @@ class FirestoreService {
         awaitClose { listener.remove() }
     }
 
+    suspend fun addFriend(fromUserId: String, toUserId: String) {
+        try {
+            // Obtener ambos usuarios
+            val fromUser = getUserById(fromUserId)
+            val toUser = getUserById(toUserId)
+
+            if (fromUser != null && toUser != null) {
+                // Actualizar la lista de amigos de ambos usuarios
+                val fromUserFriends = fromUser.friends.toMutableList()
+                val toUserFriends = toUser.friends.toMutableList()
+
+                if (!fromUserFriends.contains(toUserId)) {
+                    fromUserFriends.add(toUserId)
+                }
+
+                if (!toUserFriends.contains(fromUserId)) {
+                    toUserFriends.add(fromUserId)
+                }
+
+                // Actualizar Firestore
+                updateUser(fromUserId, mapOf("friends" to fromUserFriends))
+                updateUser(toUserId, mapOf("friends" to toUserFriends))
+            } else {
+                throw Exception("Uno de los usuarios no existe.")
+            }
+        } catch (e: Exception) {
+            throw Exception("Error al agregar amigo: ${e.message}")
+        }
+    }
+
+
 
 
 

@@ -43,17 +43,23 @@ class FriendViewModel(
 
 
     // Aceptar una solicitud de amistad
-    fun acceptFriendRequest(requestId: String) {
+    fun acceptFriendRequest(requestId: String, fromUserId: String, toUserId: String) {
         viewModelScope.launch {
             try {
+                // Actualizar el estado de la solicitud a "accepted"
                 userRepository.updateFriendRequestStatus(requestId, "accepted")
-                // Recargar solicitudes
+
+                // Agregar el amigo a la lista de ambos usuarios
+                userRepository.addFriend(fromUserId, toUserId)
+
+                // Recargar solicitudes de amistad
                 loadFriendRequests(userRepository.getCurrentUserId())
             } catch (e: Exception) {
-                println("Error al aceptar solicitud de amistad: ${e.message}")
+                println("Error al aceptar la solicitud de amistad: ${e.message}")
             }
         }
     }
+
 
     // Declinar una solicitud de amistad
     fun declineFriendRequest(requestId: String) {

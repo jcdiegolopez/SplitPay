@@ -78,16 +78,20 @@ fun FriendsScreen(navController: NavController, viewModel: FriendViewModel) {
             items(friendRequests) { friendRequest ->
                 FriendRequestItem(
                     name = friendRequest.fromUserName,
-                    onAcceptClick = { friendRequest.requestId?.let {
-                        viewModel.acceptFriendRequest(
-                            it
-                        )
-                    } },
-                    onDeclineClick = { friendRequest.requestId?.let {
-                        viewModel.declineFriendRequest(
-                            it
-                        )
-                    } }
+                    onAcceptClick = {
+                        friendRequest.requestId?.let { requestId ->
+                            viewModel.acceptFriendRequest(
+                                requestId = requestId,
+                                fromUserId = friendRequest.fromUserId,
+                                toUserId = friendRequest.toUserId
+                            )
+                        }
+                    },
+                    onDeclineClick = {
+                        friendRequest.requestId?.let {
+                            viewModel.declineFriendRequest(it)
+                        }
+                    }
                 )
             }
         }
