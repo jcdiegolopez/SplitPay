@@ -5,8 +5,9 @@ import com.economy.splitpay.model.FriendRequest
 import com.economy.splitpay.model.Group
 import com.economy.splitpay.networking.firebase.AuthService
 import com.economy.splitpay.networking.firebase.FirestoreService
-
-
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class UserRepository(
     private val authService: AuthService = AuthService(),
@@ -18,7 +19,7 @@ class UserRepository(
     }
 
     // Registrar usuario con correo y contraseña, y guardar en Firestore
-    suspend fun registerUser(email: String, password: String, firstname: String,lastname: String, tel: String,username: String) {
+    suspend fun registerUser(email: String, password: String, firstname: String, lastname: String, tel: String, username: String) {
         try {
             val userId = authService.registerUser(email, password)
             val user = User(userId = userId, firstname = firstname, username = username, email = email, lastname = lastname, tel = tel)
@@ -106,21 +107,57 @@ class UserRepository(
         authService.logout()
     }
 
-
-    // Enviar una solicitud de amistad
-    suspend fun sendFriendRequest(friendRequest: FriendRequest) {
-        firestoreService.sendFriendRequest(friendRequest)
+    // Enviar solicitud de amistad
+    suspend fun sendFriendRequest(friendRequest: FriendRequest): String {
+        return firestoreService.sendFriendRequest(friendRequest)
     }
 
-    // Obtener solicitudes de amistad recibidas
-    suspend fun getReceivedFriendRequests(userId: String): List<FriendRequest> {
-        return firestoreService.getReceivedFriendRequests(userId)
-    }
-
-    // Actualizar estado de una solicitud de amistad
+    // Actualizar estado de solicitud de amistad
     suspend fun updateFriendRequestStatus(requestId: String, status: String) {
         firestoreService.updateFriendRequestStatus(requestId, status)
     }
+
+    // Obtener todas las solicitudes de amistad de un usuario
+    suspend fun getFriendRequests(userId: String): List<FriendRequest> {
+        return try {
+            firestoreService.getFriendRequests(userId)
+        } catch (e: Exception) {
+            throw Exception("Error al obtener solicitudes de amistad: ${e.message}")
+        }
+    }
+
+
+    // Obtener el ID del usuario actualmente autenticado
+    fun getCurrentUserId(): String {
+        val user = authService.auth.currentUser
+        if (user != null) {
+            return user.uid
+        } else {
+            throw IllegalStateException("El usuario no está autenticado")
+        }
+    }
+
+    // Buscar usuarios en Firestore por nombre de usuario
+    suspend fun searchUsers(query: String): List<User> {
+        return try {
+            firestoreService.searchUsers(query)
+        } catch (e: Exception) {
+            throw Exception("Error al buscar usuarios: ${e.message}")
+        }
+    }
+
+    // UserRepository.kt
+    suspend fun getCurrentUser(): User {
+        val userId = getCurrentUserId()
+        return firestoreService.getUserById(userId)
+            ?: throw Exception("No se encontró información del usuario actual")
+    }
+
+
+    fun observeFriendRequests(userId: String): Flow<List<FriendRequest>> {
+        return firestoreService.observeFriendRequests(userId)
+    }
+
 
 
 }
