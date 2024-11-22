@@ -91,7 +91,9 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
                 focusedIndicatorColor = secondaryLight,
-                unfocusedIndicatorColor = Color.Gray
+                unfocusedIndicatorColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.LightGray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
         )
@@ -109,7 +111,9 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
                 focusedIndicatorColor = secondaryLight,
-                unfocusedIndicatorColor = Color.Gray
+                unfocusedIndicatorColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.LightGray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
         )
@@ -127,7 +131,9 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
                 focusedIndicatorColor = secondaryLight,
-                unfocusedIndicatorColor = Color.Gray
+                unfocusedIndicatorColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.LightGray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
         )
@@ -145,7 +151,9 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
                 focusedIndicatorColor = secondaryLight,
-                unfocusedIndicatorColor = Color.Gray
+                unfocusedIndicatorColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.LightGray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
@@ -163,7 +171,9 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
                 focusedIndicatorColor = secondaryLight,
-                unfocusedIndicatorColor = Color.Gray
+                unfocusedIndicatorColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.LightGray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
         )
@@ -181,7 +191,9 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
                 focusedIndicatorColor = secondaryLight,
-                unfocusedIndicatorColor = Color.Gray
+                unfocusedIndicatorColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.LightGray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = PasswordVisualTransformation()

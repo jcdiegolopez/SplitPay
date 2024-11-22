@@ -1,5 +1,6 @@
 package com.economy.splitpay.ui.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,99 +48,144 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.economy.splitpay.model.Member
 import com.economy.splitpay.navigation.Routes
+import com.economy.splitpay.viewmodel.group.GroupState
+import com.economy.splitpay.viewmodel.group.GroupViewModel
+import com.economy.splitpay.viewmodel.group.PendingGroupState
+import com.economy.splitpay.viewmodel.group.PendingGroupViewModel
+
+fun calculatePendingAmount(totalAmount: Double, members: List<Member>): Double {
+    var pendingAmount = totalAmount
+    members.forEach { member ->
+        pendingAmount -= member.assignedAmount
+    }
+    return pendingAmount
+}
 
 @Composable
-fun PendingGroupScreen(navController: NavController) {
+fun PendingGroupScreen(navController: NavController, viewModel: PendingGroupViewModel, groupId: String) {
+    // Estado para observar los datos del grupo
+    val groupState by viewModel.groupState.collectAsState()
+
+    // Cargar el grupo al iniciar la pantalla
+    LaunchedEffect(key1 = groupId) {
+        viewModel.getGroupById(groupId)
+    }
+
     var showModifyDialog by remember { mutableStateOf(false) } // Estado para mostrar el diálogo
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        // Texto Pendiente
-        Text(
-            text = "Pendiente Q345.00",
-            style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp), // Texto más pequeño
-            modifier = Modifier
-                .padding(bottom = 4.dp)
-                .align(Alignment.Start) // Alineación izquierda
-        )
+    when (groupState) {
+        is PendingGroupState.Loading -> {
+            Log.d("PendingGroupScreen", "Loading desde screen: $groupId")
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
 
-        // Texto Monto total
-        Text(
-            text = "Monto total: Q1,234.00",
-            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp), // Un poco más pequeño
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-                .align(Alignment.Start) // Alineación izquierda
-        )
+        is PendingGroupState.GroupLoaded -> {
+            Log.d("PendingGroupScreen", "Grupo cargado desde screen: ${(groupState as PendingGroupState.GroupLoaded).group}")
+            val group = (groupState as PendingGroupState.GroupLoaded).group
 
-        // Título Participantes
-        Text(
-            text = "Participantes",
-            style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp), // Un poco más pequeño
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .align(Alignment.Start) // Alineación izquierda
-        )
-
-        // Lista de participantes
-        ParticipantItem(name = "Jenny B", amount = "Q123.00", status = "Aceptado", trust = 9)
-        ParticipantItem(name = "Jimmy C", amount = "Q123.00", status = "Aceptado", trust = 8)
-        ParticipantItem(name = "Kristen D", amount = "Q123.00", status = "Pendiente", trust = 7)
-        ParticipantItem(name = "Lucy E", amount = "Q123.00", status = "Aceptado", trust = 8)
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Botones Modificar y Confirmar
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp) // Espacio entre botones
-        ) {
-            Button(
-                onClick = { showModifyDialog = true }, // Mostrar el diálogo al presionar "Modificar"
-                colors = ButtonDefaults.buttonColors(Color(0xFF127DED)),
+            Column(
                 modifier = Modifier
-                    .weight(1f) // Ancho dinámico
-                    .height(50.dp), // Altura ajustada
-                shape = RoundedCornerShape(8.dp) // Bordes menos redondeados
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
             ) {
                 Text(
-                    text = "Modificar",
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp) // Texto más grande
+                    text = "Token -${group.token}",
+                    color = Color(0xFF127DED),
+                    style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp),
+                    modifier = Modifier.padding(bottom = 4.dp).align(alignment = Alignment.CenterHorizontally)
+                )
+                Text(
+                    text = "Pendiente Q${calculatePendingAmount(group.totalAmount, group.members)}",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+
+                Text(
+                    text = "Monto total: Q${group.totalAmount}",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                Text(
+                    text = "Participantes",
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                group.members.forEach { member ->
+                    ParticipantItem(
+                        name = member.name,
+                        amount = "Q${member.assignedAmount}",
+                        status = if (member.paymentStatus == "pending") "Pendiente" else "Pagado"
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Button(
+                        onClick = { showModifyDialog = true },
+                        colors = ButtonDefaults.buttonColors(Color(0xFF127DED)),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(text = "Modificar", style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                    }
+                    Button(
+                        onClick = { navController.navigate(Routes.PaymentMethodScreen.route) },
+                        colors = ButtonDefaults.buttonColors(Color(0xFFF0F2F5)),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(text = "Confirmar", color = Color.Black, style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp))
+                    }
+                }
+            }
+
+            if (showModifyDialog) {
+                ModifyAmountDialog(
+                    onDismiss = { showModifyDialog = false },
+                    onConfirm = { selectedPerson, amount ->
+                        viewModel.updateMemberAmount(groupId, selectedPerson, amount.toDouble())
+                    }
                 )
             }
-            Button(
-                onClick = { navController.navigate(Routes.PaymentMethodScreen.route) },
-                colors = ButtonDefaults.buttonColors(Color(0xFFF0F2F5)),
-                modifier = Modifier
-                    .weight(1f) // Ancho dinámico
-                    .height(50.dp), // Altura ajustada
-                shape = RoundedCornerShape(8.dp) // Bordes menos redondeados
+        }
+
+        is PendingGroupState.Error -> {
+            Log.e("PendingGroupScreen", (groupState as PendingGroupState.Error).message)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Confirmar",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp) // Texto más grande
+                    text = (groupState as PendingGroupState.Error).message,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }
     }
-
-    if (showModifyDialog) {
-        ModifyAmountDialog(
-            onDismiss = { showModifyDialog = false },
-            onConfirm = { selectedPerson, amount ->
-                println("Persona seleccionada: $selectedPerson, Nuevo monto: $amount")
-            }
-        )
-    }
 }
 
 @Composable
-fun ParticipantItem(name: String, amount: String, status: String, trust: Int) {
+fun ParticipantItem(name: String, amount: String, status: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -147,12 +196,7 @@ fun ParticipantItem(name: String, amount: String, status: String, trust: Int) {
         Column {
             Text(
                 text = name,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold) // Semibold para los nombres
-            )
-            Text(
-                text = "Confianza: $trust",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
             )
         }
         Text(text = "$amount · $status", style = MaterialTheme.typography.bodyLarge)
@@ -162,11 +206,10 @@ fun ParticipantItem(name: String, amount: String, status: String, trust: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModifyAmountDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Unit) {
-    var selectedPerson by remember { mutableStateOf("") } // Persona seleccionada
-    var expanded by remember { mutableStateOf(false) } // Control del DropdownMenu
-    var newAmount by remember { mutableStateOf(TextFieldValue("")) } // Monto nuevo
+    var selectedPerson by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+    var newAmount by remember { mutableStateOf(TextFieldValue("")) }
 
-    // Lista de personas (puedes adaptarla según tu lógica)
     val participants = listOf("Jenny B", "Jimmy C", "Kristen D", "Lucy E")
 
     BasicAlertDialog(
@@ -178,10 +221,8 @@ fun ModifyAmountDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Uni
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
-                // Título del diálogo
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -196,10 +237,8 @@ fun ModifyAmountDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Uni
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // DropdownMenu para seleccionar a una persona
                 Text("Selecciona a una persona", style = MaterialTheme.typography.bodyLarge)
 
-                // Usar ExposedDropdownMenuBox para gestionar el Dropdown de manera más precisa
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded }
@@ -212,7 +251,7 @@ fun ModifyAmountDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Uni
                         readOnly = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .menuAnchor() // Hace que el menú aparezca debajo del TextField
+                            .menuAnchor()
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
@@ -232,25 +271,21 @@ fun ModifyAmountDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Uni
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Input para ingresar el nuevo monto
                 TextField(
                     value = newAmount,
                     onValueChange = { newAmount = it },
                     label = { Text("Ingresa el nuevo monto") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Botón para confirmar el cambio
                 Button(
                     onClick = {
                         if (selectedPerson.isNotEmpty() && newAmount.text.isNotEmpty()) {
                             onConfirm(selectedPerson, newAmount.text)
-                            onDismiss() // Cerrar el diálogo
+                            onDismiss()
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),

@@ -1,7 +1,7 @@
 package com.economy.splitpay.model
 
 data class PaymentHistory(
-    val paymentId: String = "", // ID del pago, generado automáticamente por Firestore
+    val paymentId: String? = "", // ID del pago, generado automáticamente por Firestore
     val userId: String = "", // ID del usuario que realizó o debe realizar el pago
     val groupId: String = "", // ID del grupo relacionado con el pago
     val amountPaid: Double = 0.0, // Monto pagado

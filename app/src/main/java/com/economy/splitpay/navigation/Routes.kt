@@ -10,7 +10,7 @@ sealed class Routes(val route: String) {
     //home routes
     data object CreateGroupScreen : Routes("create_group_screen")
     data object AddMemberScreen : Routes("add_member_screen")
-    data object PendingGroupsScreen : Routes("pending_group_screen")
+    data object PendingGroupsScreen : Routes("pending_group_screen/{groupId}")
     data object PaymentMethodScreen : Routes("payment_method_screen")
 
     //login routes

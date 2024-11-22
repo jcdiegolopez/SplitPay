@@ -1,5 +1,6 @@
 package com.economy.splitpay.ui.screens.home
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 
@@ -14,6 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,11 +39,21 @@ import com.economy.splitpay.R
 import com.economy.splitpay.navigation.Routes
 import com.economy.splitpay.ui.theme.secondaryContainerLight
 import com.economy.splitpay.ui.theme.secondaryLight
+import com.economy.splitpay.viewmodel.group.GroupState
+import com.economy.splitpay.viewmodel.group.GroupViewModel
+import com.economy.splitpay.viewmodel.group.HomeState
+import com.economy.splitpay.viewmodel.group.HomeViewModel
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
     var showJoinGroupDialog by remember { mutableStateOf(false) } // Estado para mostrar el diálogo
     val textColor = MaterialTheme.colorScheme.onSurface
+    val homeState by viewModel.homeState.collectAsState()
+
+    // Cargar el grupo al iniciar la pantalla
+    LaunchedEffect(Unit) {
+        viewModel.loadUserGroups()
+    }
 
     Column(
         modifier = Modifier
@@ -93,15 +106,29 @@ fun HomeScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // LazyRow para mostrar los grupos
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(0.dp)
-        ) {
-            items(listOf("Fiesta Genser", "Cena mamá", "Family", "Amigos")) { group ->
-                GroupCard(title = group, backgroundColor = MaterialTheme.colorScheme.outline)
+        when (homeState) {
+            is HomeState.Loading -> {
+                Text(text = "Cargando...")
+            }
+            is HomeState.UserGroupsLoaded -> {
+                val userGroups = (homeState as HomeState.UserGroupsLoaded).userGroups
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    items(userGroups) { group ->
+                        GroupCard(
+                            title = group.groupName,
+                            groupId = group.groupId ?: "",
+                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                            navController = navController
+                        )
+                    }
+                }
+            }
+            is HomeState.Error -> {
+                Text(text = (homeState as HomeState.Error).message, color = MaterialTheme.colorScheme.error)
             }
         }
+        // LazyRow para mostrar los grupos
+
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -122,8 +149,9 @@ fun HomeScreen(navController: NavController) {
     if (showJoinGroupDialog) {
         JoinGroupDialog(
             onDismiss = { showJoinGroupDialog = false },
-            onJoinGroup = { code ->
-                println("Código de grupo ingresado: $code")
+            onJoinGroup = { token ->
+                viewModel.joinGroupByToken(token)
+                showJoinGroupDialog = false
             }
         )
     }
@@ -132,20 +160,18 @@ fun HomeScreen(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JoinGroupDialog(onDismiss: () -> Unit, onJoinGroup: (String) -> Unit) {
-    var groupCode by remember { mutableStateOf(TextFieldValue("")) } // Estado para el código del grupo
+    var groupCode by remember { mutableStateOf(TextFieldValue("")) }
 
-    // Usando el BasicAlertDialog de la librería ExperimentalMaterial3Api
     BasicAlertDialog(
         modifier = Modifier.background(Color.White, shape = RoundedCornerShape(8.dp)),
         onDismissRequest = onDismiss,
-        properties = DialogProperties(), // Puedes agregar otras propiedades aquí si es necesario
+        properties = DialogProperties(),
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                // Título y botón de cerrar
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -167,7 +193,6 @@ fun JoinGroupDialog(onDismiss: () -> Unit, onJoinGroup: (String) -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Campo de texto para el código del grupo
                 TextField(
                     value = groupCode,
                     onValueChange = { groupCode = it },
@@ -178,11 +203,10 @@ fun JoinGroupDialog(onDismiss: () -> Unit, onJoinGroup: (String) -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Botón "Unirse"
                 Button(
                     onClick = {
-                        onJoinGroup(groupCode.text) // Acción de unirse al grupo
-                        onDismiss() // Cerrar el diálogo
+                        onJoinGroup(groupCode.text)
+                        onDismiss()
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = secondaryLight),
@@ -194,6 +218,7 @@ fun JoinGroupDialog(onDismiss: () -> Unit, onJoinGroup: (String) -> Unit) {
         }
     )
 }
+
 
 @Composable
 fun NotificationItem(message: String) {
@@ -211,7 +236,7 @@ fun NotificationItem(message: String) {
 }
 
 @Composable
-fun GroupCard(title: String, backgroundColor: Color) {
+fun GroupCard(title: String, groupId : String ,backgroundColor: Color, navController: NavController) {
     val initial = title.first().toString() // Obtener la primera letra del título
 
     Column(
@@ -225,6 +250,9 @@ fun GroupCard(title: String, backgroundColor: Color) {
             modifier = Modifier
                 .size(100.dp) // Tamaño del recuadro
                 .background(color = backgroundColor, shape = RoundedCornerShape(8.dp))
+                .clickable {
+                    navController.navigate("pending_group_screen/$groupId")
+                }
         ) {
             Text(
                 text = initial,

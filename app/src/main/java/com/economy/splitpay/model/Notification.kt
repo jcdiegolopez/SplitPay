@@ -1,7 +1,7 @@
 package com.economy.splitpay.model
 
 data class Notification(
-    val notificationId: String = "", // ID de la notificación, generado automáticamente por Firestore
+    val notificationId: String?, // ID de la notificación, generado automáticamente por Firestore
     val userId: String = "", // ID del usuario destinatario
     val type: String = "", // Tipo de notificación: "groupInvite", "friendRequest"
     val message: String = "", // Mensaje de la notificación
