@@ -127,16 +127,6 @@ class UserRepository(
     }
 
 
-    // Obtener el ID del usuario actualmente autenticado
-    fun getCurrentUserId(): String {
-        val user = authService.auth.currentUser
-        if (user != null) {
-            return user.uid
-        } else {
-            throw IllegalStateException("El usuario no está autenticado")
-        }
-    }
-
     // Buscar usuarios en Firestore por nombre de usuario
     suspend fun searchUsers(query: String): List<User> {
         return try {

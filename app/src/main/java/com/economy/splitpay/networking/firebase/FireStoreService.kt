@@ -165,15 +165,6 @@ class FirestoreService {
     }
 
 
-    // Actualizar el estado de una solicitud de amistad
-    suspend fun updateFriendRequestStatus(requestId: String, status: String) {
-        try {
-            db.collection("friend_requests").document(requestId).update("status", status).await()
-        } catch (e: Exception) {
-            throw Exception("Error al actualizar el estado de la solicitud de amistad: ${e.message}")
-        }
-    }
-
     // Obtener todas las solicitudes de amistad de un usuario
     suspend fun getFriendRequests(userId: String): List<FriendRequest> {
         return try {
@@ -194,9 +185,11 @@ class FirestoreService {
     // Actualizar el estado de una solicitud de amistad
     suspend fun updateFriendRequestStatus(requestId: String, status: String) {
         try {
-            db.collection("friend_requests")
-                .document(requestId)
-                .update("status", status)
+            db.collection("friend_requests").document(requestId).update("status", status).await()
+        } catch (e: Exception) {
+            throw Exception("Error al actualizar el estado de la solicitud de amistad: ${e.message}")
+        }
+    }
 
 
 
