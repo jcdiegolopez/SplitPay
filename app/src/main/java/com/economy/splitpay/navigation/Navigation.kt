@@ -19,6 +19,7 @@ import com.economy.splitpay.ui.screens.profile.ProfileScreen
 import com.economy.splitpay.ui.screens.register.RegisterScreen
 import com.economy.splitpay.viewmodel.login.LoginViewModel
 import com.economy.splitpay.viewmodel.login.RegisterViewModel
+import com.economy.splitpay.viewmodel.friends.FriendViewModel
 
 
 @Composable
@@ -32,7 +33,7 @@ fun AppNavigation(navController: NavHostController, innerPadding : PaddingValues
             HomeScreen(navController)
         }
         composable(Routes.FriendsScreen.route) {
-            FriendsScreen(navController)
+            FriendsScreen(navController, viewModel = FriendViewModel())
         }
         composable(Routes.HistorialScreen.route) {
             HistorialScreen(navController)
